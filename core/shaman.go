@@ -5,6 +5,7 @@ package shaman
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/nanopack/shaman/cache"
 	"github.com/nanopack/shaman/config"
@@ -13,6 +14,7 @@ import (
 
 // Answers is the cached collection of dns records
 var Answers map[string]sham.Resource
+var answersLock sync.Mutex
 
 func init() {
 	Answers = make(map[string]sham.Resource, 0)
@@ -32,7 +34,10 @@ func GetRecord(domain string) (sham.Resource, error) {
 		}
 		// update local cache
 		config.Log.Debug("Cache differs from local, updating...")
+
+		answersLock.Lock()
 		Answers[domain] = *record
+		answersLock.Unlock()
 	}
 
 	return Answers[domain], nil
@@ -81,7 +86,9 @@ func DeleteRecord(domain string) error {
 	}
 
 	// todo: atomic
+	answersLock.Lock()
 	delete(Answers, domain)
+	answersLock.Unlock()
 
 	// otherwise, be idempotent and report it was deleted...
 	return nil
@@ -123,7 +130,9 @@ func AddRecord(resource *sham.Resource) error {
 	}
 
 	// add the resource to the list of knowns
+	answersLock.Lock()
 	Answers[domain] = *resource
+	answersLock.Unlock()
 
 	return nil
 }

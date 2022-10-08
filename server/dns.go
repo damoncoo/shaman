@@ -8,7 +8,7 @@ import (
 	"github.com/miekg/dns"
 
 	"github.com/nanopack/shaman/config"
-	"github.com/nanopack/shaman/core"
+	shaman "github.com/nanopack/shaman/core"
 	sham "github.com/nanopack/shaman/core/common"
 )
 

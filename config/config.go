@@ -104,6 +104,7 @@ func LoadConfigFile() error {
 	DnsListen = viper.GetString("dns-listen")
 	LogLevel = viper.GetString("log-level")
 	Server = viper.GetBool("server")
+	DnsFallBack = viper.GetString("fallback-dns")
 
 	return nil
 }
