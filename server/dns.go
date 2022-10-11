@@ -15,8 +15,8 @@ import (
 // Start starts the DNS listener
 func Start() error {
 	dns.HandleFunc(".", handlerFunc)
-	udpListener := &dns.Server{Addr: config.DnsListen, Net: "udp"}
-	config.Log.Info("DNS listening at udp://%v", config.DnsListen)
+	udpListener := &dns.Server{Addr: config.DnsListen, Net: config.DnsProtocol}
+	config.Log.Info("DNS listening at %v://%v", config.DnsProtocol, config.DnsListen)
 	return fmt.Errorf("DNS listener stopped - %v", udpListener.ListenAndServe())
 }
 
@@ -59,6 +59,7 @@ func answerQuestion(qtype uint16, name ...string) []dns.RR {
 	answers := make([]dns.RR, 0)
 	qName := name[len(name)-1] // either `len` every time, or use var
 
+	config.Log.Trace("Querying records for '%s'", qName)
 	// get the resource (check memory, cache, and upstream)
 	r, err := shaman.GetRecord(qName)
 	if err != nil {
