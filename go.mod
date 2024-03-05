@@ -46,3 +46,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
+
+replace github.com/nanobox-io/golang-scribble => github.com/damoncoo/golang-scribble v0.0.0-20240305163805-cdbed7b0e374
