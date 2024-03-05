@@ -25,6 +25,7 @@ var (
 	DnsListen          = "127.0.0.1:53"              // Listen address for DNS requests (ip:port)
 	DnsFallBack        = ""                          // fallback dns server if record not found in cache, not used if empty
 	DnsProtocol        = "udp"                       // protocol to listen
+	DnsDefault         = ""                          // dns default value
 
 	LogLevel   = "INFO" // Log level to output [fatal|error|info|debug|trace]
 	Server     = false  // Run in server mode
@@ -52,6 +53,7 @@ func AddFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVarP(&DnsListen, "dns-listen", "O", DnsListen, "Listen address for DNS requests (ip:port)")
 	cmd.Flags().StringVarP(&DnsProtocol, "dns-protocol", "P", DnsProtocol, "protocol to listen")
 	cmd.Flags().StringVarP(&DnsFallBack, "fallback-dns", "f", DnsFallBack, "Fallback dns server address (ip:port), if not specified fallback is not used")
+	cmd.Flags().StringVarP(&DnsDefault, "dns-default", "D", DnsDefault, "DNS default value")
 
 	// core
 	cmd.Flags().StringVarP(&LogLevel, "log-level", "l", LogLevel, "Log level to output [fatal|error|info|debug|trace]")
@@ -90,7 +92,7 @@ func LoadConfigFile() error {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		return fmt.Errorf("Failed to read config file - %v", err)
+		return fmt.Errorf("failed to read config file - %v", err)
 	}
 
 	// Set values. Config file will override commandline
@@ -108,6 +110,7 @@ func LoadConfigFile() error {
 	LogLevel = viper.GetString("log-level")
 	Server = viper.GetBool("server")
 	DnsFallBack = viper.GetString("fallback-dns")
+	DnsDefault = viper.GetString("dns-default")
 
 	return nil
 }

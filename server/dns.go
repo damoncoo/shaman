@@ -67,12 +67,27 @@ func answerQuestion(qtype uint16, name ...string) []dns.RR {
 		if config.DnsFallBack != "" {
 			config.Log.Trace("Getting records for '%s' from fallback dns server '%s'", qName, config.DnsFallBack)
 			if resource, err := getAnswerFromFallBackServer(qName, config.DnsFallBack); err != nil {
-				config.Log.Trace("Failed to get records for '%s' from fallback dns server - %v", qName, err)
+				if config.DnsDefault != "" {
+					r = sham.Resource{
+						Domain:  qName,
+						Records: []sham.Record{{Address: config.DnsDefault, TTL: 300, Class: "IN", RType: "A"}},
+					}
+				} else {
+					config.Log.Trace("Failed to get records for '%s' from fallback dns server - %v", qName, err)
+				}
+
 			} else {
 				r = resource
 			}
 		} else {
-			config.Log.Trace("Failed to get records for '%s' - %v", qName, err)
+			if config.DnsDefault != "" {
+				r = sham.Resource{
+					Domain:  qName,
+					Records: []sham.Record{{Address: config.DnsDefault, TTL: 300, Class: "IN", RType: "A"}},
+				}
+			} else {
+				config.Log.Trace("Failed to get records for  '%s' - %v", qName, err)
+			}
 		}
 	}
 
